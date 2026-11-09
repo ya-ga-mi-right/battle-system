@@ -1,5 +1,7 @@
+import os
 import time
 import random
+from email.mime import base
 
 from types import TracebackType
 
@@ -25,7 +27,11 @@ class Ninja:
             print("给怪物躲了过去，可惜")
         else:
             real_dmg = random.randint(self.atk - 20, self.atk + 100)
-            enemy.hp = enemy.hp - real_dmg
+            crit_dice = random.randint(1, 10)
+            if crit_dice >= 8:
+             real_dmg = real_dmg * 2
+             print(f"✨【被动触发】飞雷神二段！时空忍术的无情连打！")
+             enemy.hp = enemy.hp - real_dmg
             print(f"【{enemy.name}】受到了 {real_dmg} 点伤害！剩余血量: {enemy.hp}")
     def heal(self):
         self.potions = (self.potions - 1)
@@ -118,6 +124,8 @@ for target in boss_list:
 
 
     while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+
         print("\n====================")
 
         print(f"❤ 水门 HP: {minato.hp}  |   能量: {minato.energy}/100")
