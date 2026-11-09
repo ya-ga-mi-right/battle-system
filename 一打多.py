@@ -81,6 +81,7 @@ class Monster:
         self.energy = 0
         self.potions = 2
         self.skill_name = skill_name
+        self.is_enrage = False
     def attack(self, enemy):
 
 
@@ -107,6 +108,19 @@ class Monster:
          real_dmg = random.randint(self.atk - 20, self.atk + 100)
          enemy.hp = enemy.hp - real_dmg
          print(f"【{enemy.name}】被重创，受到了 {real_dmg} 点巨额伤害！")
+    def enrage(self):
+        self.is_enrage = True
+        self.name = "深渊魔王【终极毁灭真身】"
+        self.hp = 100000
+        self.atk = self.atk + 8000
+        print("\n" + "=" * 15)
+        print("⚠ 警告！深渊魔王在倒下的瞬间，捏碎了体内的深渊核心！")
+        print(f"空间碎裂，绝望降临！【{self.name}】拔地而起！")
+        print(" 它的血量已重置！攻击力极其恐怖！")
+        print("=" * 15 + "\n")
+
+
+
 
 
 minato = Ninja("波风水门", 900, 200)
@@ -170,14 +184,18 @@ for target in boss_list:
 
 
         if target.hp <= 0:
-            print(f"🎉 华丽击杀！水门战胜了 {target.name}！准备迎接下一个！")
-            drop_dice = random.randint(1, 2)
-            minato.potions = minato.potions + drop_dice
-            drop_dice = random.randint(10, 50)
-            minato.gold = minato.gold +drop_dice
-            print(f" 水门从 {target.name} 身上搜刮出了 {drop_dice} 瓶秘药！",f"同时搜到了金币{drop_dice}")
-            print(f"当前秘药: {minato.potions} 瓶,目前金币数量为{minato.gold}" )
-            break
+            if target.name == "深渊魔王" and target.is_enrage == False:
+                target.enrage()
+                time.sleep(2)
+            else:
+                 print(f"🎉 华丽击杀！水门战胜了 {target.name}！准备迎接下一个！")
+                 drop_dice = random.randint(1, 2)
+                 minato.potions = minato.potions + drop_dice
+                 drop_dice = random.randint(10, 50)
+                 minato.gold = minato.gold +drop_dice
+                 print(f" 水门从 {target.name} 身上搜刮出了 {drop_dice} 瓶秘药！",f"同时搜到了金币{drop_dice}")
+                 print(f"当前秘药: {minato.potions} 瓶,目前金币数量为{minato.gold}" )
+                 break
 
         time.sleep(0.5)
 
@@ -203,7 +221,8 @@ for target in boss_list:
         print("\n游戏结束，胜败乃兵家常事。")
         break
 
-    if minato.hp >= 0 and target.name != "深渊魔王":
+    if minato.hp >= 0 and "深渊魔王" not in target.name:
+       while True:
         print("\n" + "="*30)
         print("路边突然出现了一名行商")
         print("行商：\"哟，客人！要不要来点好东西？\"")
@@ -219,19 +238,23 @@ for target in boss_list:
                 minato.gold = minato.gold - 30
                 minato.potions = minato.potions + 1
                 print(f"秘药数量增加了 当前秘药剩余{minato.potions}")
+                break
             else:
                 print("钱不够 买点能买的起的吧 ")
-
+                time.sleep(1)
         if shop_choice == "2":
             if minato.gold >= 50:
                 minato.gold = minato.gold - 300
                 minato.atk = minato.atk + 300
                 print(f"加强苦无更加锋利 伤害显著提高了 目前水门的攻击力为{minato.atk}")
+                break
             else:
                 print("这个买不起 买点能买的起的吧")
+                time.sleep(1)
         else:
             print("行商：祝你好运，别死在前面了")
+            break
         time.sleep(2)
 
-if minato.hp > 0:
+if minato.hp >= 0:
     print("\n 【终极通关】太强了！波风水门全歼了怪物大军，赢得了最终的胜利！")
