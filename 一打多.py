@@ -17,6 +17,7 @@ class Ninja:
         self.potions = 3
         self.is_edo = False
         self.is_kurama = False
+        self.gold = 0
     def attack(self, enemy):
 
         self.energy = self.energy +40
@@ -30,9 +31,12 @@ class Ninja:
             crit_dice = random.randint(1, 10)
             if crit_dice >= 8:
              real_dmg = real_dmg * 2
-             print(f"✨【被动触发】飞雷神二段！时空忍术的无情连打！")
              enemy.hp = enemy.hp - real_dmg
-            print(f"【{enemy.name}】受到了 {real_dmg} 点伤害！剩余血量: {enemy.hp}")
+             print(f"【被动触发】飞雷神二段！时空忍术的无情连打！")
+             print(f"暴击，{enemy.name}受到了{real_dmg}的暴击伤害 目前怪物的血量为{enemy.hp}")
+            else:
+                enemy.hp = enemy.hp - real_dmg
+                print(f"【{enemy.name}】受到了 {real_dmg} 点伤害！剩余血量: {enemy.hp}")
     def heal(self):
         self.potions = (self.potions - 1)
         self.hp = self.hp + 300
@@ -83,7 +87,7 @@ class Monster:
         print(f"【{self.name}】愤怒咆哮，挥舞大棒砸向【{enemy.name}】！")
         dodge_dice = random.randint(1, 10)
         if dodge_dice >= 9:
-            print(f"💨 唰！金色闪光！【{enemy.name}】看穿了动作，完美闪避了这次攻击！")
+            print(f" 唰！金色闪光！【{enemy.name}】看穿了动作，完美闪避了这次攻击！")
         else:
           real_dmg = random.randint(self.atk - 1000, self.atk + 3000)
           enemy.hp = enemy.hp - real_dmg
@@ -169,7 +173,10 @@ for target in boss_list:
             print(f"🎉 华丽击杀！水门战胜了 {target.name}！准备迎接下一个！")
             drop_dice = random.randint(1, 2)
             minato.potions = minato.potions + drop_dice
-            print(f" 水门从 {target.name} 身上搜刮出了 {drop_dice} 瓶秘药！当前秘药: {minato.potions} 瓶")
+            drop_dice = random.randint(10, 50)
+            minato.gold = minato.gold +drop_dice
+            print(f" 水门从 {target.name} 身上搜刮出了 {drop_dice} 瓶秘药！",f"同时搜到了金币{drop_dice}")
+            print(f"当前秘药: {minato.potions} 瓶,目前金币数量为{minato.gold}" )
             break
 
         time.sleep(0.5)
@@ -196,6 +203,35 @@ for target in boss_list:
         print("\n游戏结束，胜败乃兵家常事。")
         break
 
+    if minato.hp >= 0 and target.name != "深渊魔王":
+        print("\n" + "="*30)
+        print("路边突然出现了一名行商")
+        print("行商：\"哟，客人！要不要来点好东西？\"")
+        print("行商打开自己面前的箱子")
+        print(f"水门目前拥有的金币数量为{minato.gold}")
+        print("1.买特效伤药 (花费 30 金币，获得 1 瓶秘药)")
+        print("2.强化苦无 (花费 50 金币，永久增加 300 点攻击力")
+        print("3.不买了 直接去打下一个怪")
+
+        shop_choice = input("请输入购买编号 (1/2/3)")
+        if shop_choice == "1":
+            if minato.gold >= 30:
+                minato.gold = minato.gold - 30
+                minato.potions = minato.potions + 1
+                print(f"秘药数量增加了 当前秘药剩余{minato.potions}")
+            else:
+                print("钱不够 买点能买的起的吧 ")
+
+        if shop_choice == "2":
+            if minato.gold >= 50:
+                minato.gold = minato.gold - 300
+                minato.atk = minato.atk + 300
+                print(f"加强苦无更加锋利 伤害显著提高了 目前水门的攻击力为{minato.atk}")
+            else:
+                print("这个买不起 买点能买的起的吧")
+        else:
+            print("行商：祝你好运，别死在前面了")
+        time.sleep(2)
 
 if minato.hp > 0:
     print("\n 【终极通关】太强了！波风水门全歼了怪物大军，赢得了最终的胜利！")
